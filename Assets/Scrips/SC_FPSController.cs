@@ -14,6 +14,12 @@ public class SC_FPSController : MonoBehaviour
     public float lookSpeed = 2.0f;
     public float lookXLimit = 45.0f;
 
+    public float stamina = 100f;
+    public float maxStamina = 100f;
+    public float staminaDepletionRate = 10f; // Adjust this value according to your game's balance
+    public AudioClip heavyBreathingSound; // Reference to the heavy breathing sound effect
+    private AudioSource audioSource;
+
     CharacterController characterController;
     Vector3 moveDirection = Vector3.zero;
     float rotationX = 0;
@@ -28,10 +34,21 @@ public class SC_FPSController : MonoBehaviour
         // Lock cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
     {
+        // Reduce stamina over time
+        stamina -= staminaDepletionRate * Time.deltaTime;
+
+        // If stamina reaches zero, play heavy breathing sound effect
+        if (stamina <= 0f)
+        {
+            PlayHeavyBreathingSound();
+        }
+
         // We are grounded, so recalculate move direction based on axes
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
@@ -71,4 +88,19 @@ public class SC_FPSController : MonoBehaviour
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
         }
     }
+
+    void PlayHeavyBreathingSound()
+    {
+        if (heavyBreathingSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(heavyBreathingSound);
+        }
+        else
+        {
+            Debug.LogWarning("Heavy breathing sound effect or AudioSource is not set!");
+        }
+    }
 }
+
+
+
