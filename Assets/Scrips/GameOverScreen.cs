@@ -15,10 +15,6 @@ public class GameOverScreen : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.V)) 
-        {
-            SceneManager.LoadScene("Lvl 2");
-        }
         
         if (Input.GetKeyDown(KeyCode.H)) 
         {
