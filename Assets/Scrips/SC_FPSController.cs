@@ -18,6 +18,7 @@ public class SC_FPSController : MonoBehaviour
     public float lookXLimit = 45.0f;
     public float crouchStaminaRegenRate = 5f; // Rate at which stamina regenerates when crouching
     public float walkStaminaRegenRate = 10f; // Rate at which stamina regenerates when walking
+    public float customStaminaDepletionRate = 50f; // Customizable stamina depletion rate
 
     CharacterController characterController;
     Vector3 moveDirection = Vector3.zero;
@@ -127,6 +128,7 @@ public class SC_FPSController : MonoBehaviour
         }
     }
 }
+
 
 
 
