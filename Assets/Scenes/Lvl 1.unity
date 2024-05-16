@@ -1004,7 +1004,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed7b32c54a4483c4db67c6af2b50f000, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkingSpeed: 1.57
+  walkingSpeed: 2.74
   sprintSpeed: 5.52
   sprintStaminaDepletionRate: 20
   maxStamina: 20
@@ -1016,7 +1016,7 @@ MonoBehaviour:
   lookXLimit: 45
   crouchStaminaRegenRate: 2.11
   walkStaminaRegenRate: 3.07
-  customStaminaDepletionRate: 73.3
+  customStaminaDepletionRate: 84.1
   canMove: 1
   crouchHeight: 1
 --- !u!143 &344751964
