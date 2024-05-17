@@ -99,7 +99,10 @@ public class SC_FPSController : MonoBehaviour
         }
 
         // Move the controller
-        characterController.Move(moveDirection * Time.deltaTime);
+        if (canMove)
+        {
+            characterController.Move(moveDirection * Time.deltaTime);
+        }
 
         // Player and Camera rotation
         if (canMove)
@@ -111,23 +114,24 @@ public class SC_FPSController : MonoBehaviour
         }
 
         // Crouch
-        if (isCrouching)
+        if (isCrouching && canMove)
         {
             characterController.height = crouchHeight;
         }
-        else
+        else if (canMove)
         {
             characterController.height = originalHeight;
         }
 
         // Regenerate stamina
-        if (!isSprinting)
+        if (!isSprinting && canMove)
         {
             stamina += staminaRegenRate * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0f, maxStamina); // Clamp stamina value
         }
     }
 }
+
 
 
 
