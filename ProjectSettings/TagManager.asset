@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Music
   - PlayButton
+  - PlayerArm
   layers:
   - Default
   - TransparentFX
