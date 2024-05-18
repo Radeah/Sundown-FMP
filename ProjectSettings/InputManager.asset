@@ -486,11 +486,11 @@ InputManager:
     axis: 5
     joyNum: 0
   - serializedVersion: 3
-    m_Name: Y
+    m_Name: EKey
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: y
+    positiveButton: e
     altNegativeButton: 
     altPositiveButton: 
     gravity: 1000
@@ -502,7 +502,7 @@ InputManager:
     axis: 5
     joyNum: 0
   - serializedVersion: 3
-    m_Name: R
+    m_Name: RKey
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
@@ -518,27 +518,11 @@ InputManager:
     axis: 5
     joyNum: 0
   - serializedVersion: 3
-    m_Name: T
+    m_Name: TKey
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
     positiveButton: t
-    altNegativeButton: 
-    altPositiveButton: 
-    gravity: 1000
-    dead: 0.001
-    sensitivity: 1000
-    snap: 0
-    invert: 0
-    type: 2
-    axis: 5
-    joyNum: 0
-  - serializedVersion: 3
-    m_Name: E
-    descriptiveName: 
-    descriptiveNegativeName: 
-    negativeButton: 
-    positiveButton: e
     altNegativeButton: 
     altPositiveButton: 
     gravity: 1000

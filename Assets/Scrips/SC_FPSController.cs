@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -17,7 +15,6 @@ public class SC_FPSController : MonoBehaviour
     public float lookXLimit = 45.0f;
     public float crouchStaminaRegenRate = 5f;
     public float walkStaminaRegenRate = 10f;
-    public float customStaminaDepletionRate = 50f;
 
     CharacterController characterController;
     Vector3 moveDirection = Vector3.zero;
@@ -41,6 +38,8 @@ public class SC_FPSController : MonoBehaviour
 
     void Update()
     {
+        if (!canMove) return;
+
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
         bool isSprinting = Input.GetKey(KeyCode.LeftShift) && stamina > 0;
@@ -50,32 +49,29 @@ public class SC_FPSController : MonoBehaviour
         float curSpeedY = 0;
         float staminaRegenRate = walkStaminaRegenRate;
 
-        if (canMove)
+        if (isSprinting)
         {
-            if (isSprinting)
-            {
-                curSpeedX = sprintSpeed * Input.GetAxis("Vertical");
-                curSpeedY = sprintSpeed * Input.GetAxis("Horizontal");
-                stamina -= sprintStaminaDepletionRate * Time.deltaTime;
-                stamina = Mathf.Clamp(stamina, 0f, maxStamina);
-            }
-            else if (isCrouching)
-            {
-                curSpeedX = crouchSpeed * Input.GetAxis("Vertical");
-                curSpeedY = crouchSpeed * Input.GetAxis("Horizontal");
-                staminaRegenRate = crouchStaminaRegenRate;
-            }
-            else
-            {
-                curSpeedX = walkingSpeed * Input.GetAxis("Vertical");
-                curSpeedY = walkingSpeed * Input.GetAxis("Horizontal");
-            }
+            curSpeedX = sprintSpeed * Input.GetAxis("Vertical");
+            curSpeedY = sprintSpeed * Input.GetAxis("Horizontal");
+            stamina -= sprintStaminaDepletionRate * Time.deltaTime;
+            stamina = Mathf.Clamp(stamina, 0f, maxStamina);
+        }
+        else if (isCrouching)
+        {
+            curSpeedX = crouchSpeed * Input.GetAxis("Vertical");
+            curSpeedY = crouchSpeed * Input.GetAxis("Horizontal");
+            staminaRegenRate = crouchStaminaRegenRate;
+        }
+        else
+        {
+            curSpeedX = walkingSpeed * Input.GetAxis("Vertical");
+            curSpeedY = walkingSpeed * Input.GetAxis("Horizontal");
         }
 
         float movementDirectionY = moveDirection.y;
         moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
-        if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
+        if (Input.GetButton("Jump") && characterController.isGrounded)
         {
             moveDirection.y = jumpSpeed;
         }
@@ -89,42 +85,46 @@ public class SC_FPSController : MonoBehaviour
             moveDirection.y -= gravity * Time.deltaTime;
         }
 
-        if (canMove)
-        {
-            characterController.Move(moveDirection * Time.deltaTime);
-        }
+        characterController.Move(moveDirection * Time.deltaTime);
 
-        if (canMove)
-        {
-            rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
-            rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
-            playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-            transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
-        }
+        rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
+        rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
+        playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
+        transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
 
-        if (isCrouching && canMove)
+        if (isCrouching)
         {
             characterController.height = crouchHeight;
         }
-        else if (canMove)
+        else
         {
             characterController.height = originalHeight;
         }
 
-        if (!isSprinting && canMove)
+        if (!isSprinting)
         {
             stamina += staminaRegenRate * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0f, maxStamina);
         }
     }
+
+    // Disable movement when entering the trigger
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            canMove = false;
+        }
+    }
+
+    // Enable movement when exiting the trigger
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            canMove = true;
+        }
+    }
 }
-
-
-
-
-
-
-
-
 
 
