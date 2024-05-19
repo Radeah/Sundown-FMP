@@ -4,17 +4,18 @@ using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
+    // Make the class a singleton accessible from other scripts
     public static InventoryManager instance;
 
-    private List<GameObject> inventoryItems;
+    // List to hold inventory items
+    private List<GameObject> inventoryItems = new List<GameObject>();
 
-    void Awake()
+    private void Awake()
     {
+        // Ensure only one instance of InventoryManager exists
         if (instance == null)
         {
             instance = this;
-            inventoryItems = new List<GameObject>();
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -24,16 +25,35 @@ public class InventoryManager : MonoBehaviour
 
     public void AddItem(GameObject item)
     {
+        // Add item to the inventory
         inventoryItems.Add(item);
-        item.SetActive(false); // Deactivate item in the scene
-        Debug.Log("Item added to inventory: " + item.name);
+
+        // Disable the renderer or the entire GameObject
+        Renderer[] renderers = item.GetComponentsInChildren<Renderer>();
+        foreach (Renderer renderer in renderers)
+        {
+            renderer.enabled = false;
+        }
+
+        // Log that the item has been added to the inventory
+        Debug.Log(item.name + " has been added to the inventory.");
     }
 
-    public bool HasItem(GameObject item)
+    public void RemoveItem(GameObject item)
     {
-        return inventoryItems.Contains(item);
+        // Remove item from the inventory
+        if (inventoryItems.Contains(item))
+        {
+            inventoryItems.Remove(item);
+        }
     }
 
-    // Optionally, you can add methods to remove items, use items, etc.
+    public List<GameObject> GetInventoryItems()
+    {
+        // Return a list of inventory items
+        return inventoryItems;
+    }
 }
+
+
 

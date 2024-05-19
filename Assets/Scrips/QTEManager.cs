@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -65,10 +66,10 @@ public class QTEManager : MonoBehaviour
             StartCoroutine(Countdown());
 
             // Wait for the current QTE sequence to complete
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(3.5f);
         }
 
-        DisplayBox.text = "QTE Sequence Complete!";
+        DisplayBox.text = "Complete!";
         yield return new WaitForSeconds(1.5f); // Wait for a short duration before hiding the UI
         QTECanvas.SetActive(false); // Turn off the UI
         qteStarted = false;
@@ -120,7 +121,7 @@ public class QTEManager : MonoBehaviour
 
             if (successfulKeyPresses >= maxSuccessfulKeyPresses)
             {
-                DisplayBox.text = "QTE Sequence Complete!";
+                DisplayBox.text = "Complete!";
                 StartCoroutine(EndQTESequence()); // Start coroutine to end the QTE sequence
                 return;
             }

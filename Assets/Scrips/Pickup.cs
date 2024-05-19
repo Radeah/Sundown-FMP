@@ -4,39 +4,55 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
-    public GameObject invObj; // Reference to the inventory representation of the item
-    public GameObject pickUpText;
+    public GameObject itemToAdd; // Reference to the item to add to the inventory
+    public GameObject pickUpText; // Reference to the UI text for interaction
 
     void Start()
     {
-        pickUpText.SetActive(false);
-        invObj.SetActive(false); // Make sure the inventory object is initially inactive
+        SetPickupTextActive(false); // Ensure the text is initially hidden
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            pickUpText.SetActive(true);
+            SetPickupTextActive(true); // Show the interaction text
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            pickUpText.SetActive(false);
+            SetPickupTextActive(false); // Hide the interaction text
         }
     }
 
     void Update()
     {
-        if (pickUpText.activeSelf && Input.GetButtonDown("E"))
+        if (pickUpText.activeSelf && Input.GetKeyDown(KeyCode.E))
         {
-            InventoryManager.instance.AddItem(invObj); // Add the item to the inventory
-            pickUpText.SetActive(false);
-            Destroy(gameObject); // Destroy the pickup object
+            AddItemToInventory();
+        }
+    }
+
+    void AddItemToInventory()
+    {
+        InventoryManager.instance.AddItem(itemToAdd); // Add the item to the inventory
+        Destroy(gameObject); // Destroy the pickup object after adding it to the inventory
+        SetPickupTextActive(false); // Hide the interaction text
+    }
+
+    void SetPickupTextActive(bool isActive)
+    {
+        pickUpText.SetActive(isActive);
+        if (isActive)
+        {
+            // Set the text to display "Press E"
+            pickUpText.GetComponent<TextMesh>().text = "Press E";
         }
     }
 }
+
+
 

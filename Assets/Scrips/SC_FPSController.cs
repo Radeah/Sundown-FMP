@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -15,11 +17,13 @@ public class SC_FPSController : MonoBehaviour
     public float lookXLimit = 45.0f;
     public float crouchStaminaRegenRate = 5f;
     public float walkStaminaRegenRate = 10f;
+    public AudioClip outOfStaminaAudio; // Audio clip for out of stamina cue
 
     CharacterController characterController;
     Vector3 moveDirection = Vector3.zero;
     float rotationX = 0;
     float stamina;
+    AudioSource audioSource;
 
     [HideInInspector]
     public bool canMove = true;
@@ -34,6 +38,13 @@ public class SC_FPSController : MonoBehaviour
 
         originalHeight = characterController.height;
         stamina = maxStamina;
+
+        // Get the AudioSource component attached to this GameObject or any parent GameObject
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     void Update()
@@ -101,10 +112,19 @@ public class SC_FPSController : MonoBehaviour
             characterController.height = originalHeight;
         }
 
-        if (!isSprinting)
+        if (isSprinting)
         {
             stamina += staminaRegenRate * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0f, maxStamina);
+        }
+
+        if (stamina <= 0)
+        {
+            // Play out of stamina audio cue
+            if (outOfStaminaAudio != null && !audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(outOfStaminaAudio);
+            }
         }
     }
 
@@ -126,5 +146,6 @@ public class SC_FPSController : MonoBehaviour
         }
     }
 }
+
 
 
