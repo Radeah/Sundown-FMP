@@ -34,9 +34,6 @@ public class InventoryManager : MonoBehaviour
         {
             renderer.enabled = false;
         }
-
-        // Log that the item has been added to the inventory
-        Debug.Log(item.name + " has been added to the inventory.");
     }
 
     public void RemoveItem(GameObject item)
@@ -46,6 +43,12 @@ public class InventoryManager : MonoBehaviour
         {
             inventoryItems.Remove(item);
         }
+    }
+
+    public bool HasItem(GameObject item)
+    {
+        // Check if the item is present in the inventory
+        return inventoryItems.Contains(item);
     }
 
     public List<GameObject> GetInventoryItems()

@@ -6,6 +6,7 @@ public class Pickup : MonoBehaviour
 {
     public GameObject itemToAdd; // Reference to the item to add to the inventory
     public GameObject pickUpText; // Reference to the UI text for interaction
+    public bool isInUse = false; // Flag to track whether the item is in use or not
 
     void Start()
     {
@@ -14,7 +15,7 @@ public class Pickup : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !isInUse)
         {
             SetPickupTextActive(true); // Show the interaction text
         }
@@ -30,7 +31,7 @@ public class Pickup : MonoBehaviour
 
     void Update()
     {
-        if (pickUpText.activeSelf && Input.GetKeyDown(KeyCode.E))
+        if (!isInUse && pickUpText.activeSelf && Input.GetKeyDown(KeyCode.E))
         {
             AddItemToInventory();
         }
@@ -53,6 +54,5 @@ public class Pickup : MonoBehaviour
         }
     }
 }
-
 
 
