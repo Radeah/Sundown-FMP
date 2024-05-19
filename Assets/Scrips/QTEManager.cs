@@ -7,13 +7,14 @@ public class QTEManager : MonoBehaviour
     public Text DisplayBox;
     public Text PassBox;
     public GameObject QTECanvas; // Reference to the Canvas or parent GameObject of the UI elements
+    public GameObject player; // Reference to the player GameObject
+    private SC_FPSController playerController; // Reference to the player's movement controller script/component
 
     private int QTEGen;
     private bool waitingForKey;
+    private bool qteInProgress; // Flag to track if a QTE sequence is in progress
     private float countdownTime;
     private float initialCountdownTime = 3.5f;
-    private float minCountdownTime = 1f;
-    private float difficultyIncrement = 0.2f;
     private int successfulKeyPresses;
     private int maxSuccessfulKeyPresses = 5;
     private bool qteStarted = false;
@@ -22,6 +23,7 @@ public class QTEManager : MonoBehaviour
     {
         countdownTime = initialCountdownTime;
         QTECanvas.SetActive(false); // Start with the QTE UI hidden
+        playerController = FindObjectOfType<SC_FPSController>(); // Initialize playerController
     }
 
     void Update()
@@ -34,12 +36,18 @@ public class QTEManager : MonoBehaviour
 
     IEnumerator GenerateQTE()
     {
+        // Ensure only one QTE sequence is active at a time
+        if (qteInProgress)
+        {
+            yield break;
+        }
+
+        qteInProgress = true;
+
         while (successfulKeyPresses < maxSuccessfulKeyPresses)
         {
-            yield return new WaitForSeconds(2f); // Wait before generating the next QTE
             QTEGen = Random.Range(1, 4);
             waitingForKey = true;
-            countdownTime = Mathf.Max(countdownTime, minCountdownTime);
 
             switch (QTEGen)
             {
@@ -55,12 +63,18 @@ public class QTEManager : MonoBehaviour
             }
 
             StartCoroutine(Countdown());
+
+            // Wait for the current QTE sequence to complete
+            yield return new WaitForSeconds(3f);
         }
 
         DisplayBox.text = "QTE Sequence Complete!";
         yield return new WaitForSeconds(1.5f); // Wait for a short duration before hiding the UI
         QTECanvas.SetActive(false); // Turn off the UI
         qteStarted = false;
+        qteInProgress = false; // Reset the flag
+        EnablePlayerMovement(); // Enable player movement after completing the QTE
+        Destroy(gameObject); // Destroy the QTEManager GameObject
     }
 
     IEnumerator Countdown()
@@ -76,6 +90,8 @@ public class QTEManager : MonoBehaviour
         {
             waitingForKey = false;
             DisplayResult("FAILED");
+            yield return new WaitForSeconds(4f); // Wait for 4 seconds before restarting the QTE
+            RestartQTE(); // Restart the QTE if the countdown ends without a key press
         }
     }
 
@@ -101,7 +117,6 @@ public class QTEManager : MonoBehaviour
         {
             successfulKeyPresses++;
             DisplayResult("PASS");
-            countdownTime = Mathf.Max(countdownTime - difficultyIncrement, minCountdownTime);
 
             if (successfulKeyPresses >= maxSuccessfulKeyPresses)
             {
@@ -113,6 +128,7 @@ public class QTEManager : MonoBehaviour
         else
         {
             DisplayResult("FAILED");
+            StartCoroutine(RestartQTEWithDelay()); // Restart the QTE with a delay if the key pressed is incorrect
         }
     }
 
@@ -134,6 +150,21 @@ public class QTEManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         QTECanvas.SetActive(false);
         qteStarted = false;
+        qteInProgress = false; // Reset the flag
+        EnablePlayerMovement(); // Enable player movement after completing the QTE
+        Destroy(gameObject); // Destroy the QTEManager GameObject
+    }
+
+    IEnumerator RestartQTEWithDelay()
+    {
+        yield return new WaitForSeconds(4f); // Wait for 4 seconds before restarting the QTE
+        RestartQTE();
+    }
+
+    void RestartQTE()
+    {
+        successfulKeyPresses = 0; // Reset the successful key presses count
+        StartCoroutine(GenerateQTE()); // Restart the QTE sequence
     }
 
     private void OnTriggerEnter(Collider other)
@@ -143,6 +174,7 @@ public class QTEManager : MonoBehaviour
             QTECanvas.SetActive(true); // Show the QTE UI
             qteStarted = true;
             successfulKeyPresses = 0;
+            DisablePlayerMovement(); // Disable player movement when entering the trigger
             StartCoroutine(GenerateQTE());
         }
     }
@@ -156,7 +188,32 @@ public class QTEManager : MonoBehaviour
             qteStarted = false;
             DisplayBox.text = "";
             PassBox.text = "";
+            EnablePlayerMovement(); // Enable player movement if the player exits the trigger area
+        }
+    }
+
+    void DisablePlayerMovement()
+    {
+        if (playerController != null)
+        {
+            playerController.canMove = false; // Disable player movement
+        }
+    }
+
+    void EnablePlayerMovement()
+    {
+        if (playerController != null)
+        {
+            playerController.canMove = true; // Enable player movement
         }
     }
 }
+
+
+
+
+
+
+
+
 
