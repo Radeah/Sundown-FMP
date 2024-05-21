@@ -1,22 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DoorScript;
+using UnityEngine.UI;
 
 public class LockDoor : MonoBehaviour
 {
-    public GameObject pickUpText; // Reference to the UI text for interaction
-    public GameObject keyItem; // Reference to the key item required to unlock the door
+    public GameObject pickUpText;
+    public GameObject keyItem;
 
-    private bool isLocked = true; // Flag to track whether the door is locked or unlocked
-    private bool isPlayerInTrigger = false; // Flag to track whether the player is in the collider
-
-    private Door door; // Reference to the Door script
+    private bool isLocked = true;
+    private bool isPlayerInTrigger = false;
 
     void Start()
     {
-        SetPickupTextActive(false); // Ensure the text is initially hidden
-        door = GetComponent<Door>(); // Get the Door script attached to the same GameObject
+        SetPickupTextActive(false);
     }
 
     void OnTriggerEnter(Collider other)
@@ -28,11 +25,11 @@ public class LockDoor : MonoBehaviour
             {
                 if (InventoryManager.instance.HasItem(keyItem))
                 {
-                    SetPickupTextActive(true); // Show the interaction text to unlock the door
+                    SetPickupTextActive(true);
                 }
                 else
                 {
-                    SetPickupTextActive(true); // Show the interaction text that the door is locked
+                    SetPickupTextActive(true);
                 }
             }
         }
@@ -43,7 +40,7 @@ public class LockDoor : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerInTrigger = false;
-            SetPickupTextActive(false); // Hide the interaction text
+            SetPickupTextActive(false);
         }
     }
 
@@ -53,7 +50,7 @@ public class LockDoor : MonoBehaviour
         {
             if (isLocked && InventoryManager.instance.HasItem(keyItem))
             {
-                UnlockDoor(); // Unlock the door if the player has the key and presses E
+                UnlockDoor();
             }
         }
     }
@@ -61,9 +58,8 @@ public class LockDoor : MonoBehaviour
     void UnlockDoor()
     {
         isLocked = false;
-        SetPickupTextActive(false); // Hide the interaction text
-        door.OpenDoor(); // Call the OpenDoor method from the Door script
-        Destroy(gameObject); // Destroy the lock object itself
+        SetPickupTextActive(false);
+        Destroy(gameObject, 2f);
     }
 
     void SetPickupTextActive(bool isActive)
@@ -71,11 +67,21 @@ public class LockDoor : MonoBehaviour
         pickUpText.SetActive(isActive);
         if (isActive)
         {
-            // Set the text to display "Press E to unlock"
-            pickUpText.GetComponent<TextMesh>().text = "Press E to unlock";
+            Text textComponent = pickUpText.GetComponent<Text>();
+            if (textComponent != null)
+            {
+                textComponent.text = "Press E to unlock";
+            }
+            else
+            {
+                Debug.LogError("Text component not found on pickUpText GameObject.");
+            }
         }
     }
 }
+
+
+
 
 
 

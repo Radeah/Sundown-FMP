@@ -1,23 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Pickup : MonoBehaviour
 {
-    public GameObject itemToAdd; // Reference to the item to add to the inventory
-    public GameObject pickUpText; // Reference to the UI text for interaction
-    public bool isInUse = false; // Flag to track whether the item is in use or not
+    public GameObject itemToAdd;
+    public GameObject pickUpText;
+    public bool isInUse = false;
 
     void Start()
     {
-        SetPickupTextActive(false); // Ensure the text is initially hidden
+        SetPickupTextActive(false);
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && !isInUse)
         {
-            SetPickupTextActive(true); // Show the interaction text
+            SetPickupTextActive(true);
         }
     }
 
@@ -25,7 +26,7 @@ public class Pickup : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            SetPickupTextActive(false); // Hide the interaction text
+            SetPickupTextActive(false);
         }
     }
 
@@ -39,9 +40,9 @@ public class Pickup : MonoBehaviour
 
     void AddItemToInventory()
     {
-        InventoryManager.instance.AddItem(itemToAdd); // Add the item to the inventory
-        Destroy(gameObject); // Destroy the pickup object after adding it to the inventory
-        SetPickupTextActive(false); // Hide the interaction text
+        InventoryManager.instance.AddItem(itemToAdd);
+        Destroy(gameObject);
+        SetPickupTextActive(false);
     }
 
     void SetPickupTextActive(bool isActive)
@@ -49,10 +50,18 @@ public class Pickup : MonoBehaviour
         pickUpText.SetActive(isActive);
         if (isActive)
         {
-            // Set the text to display "Press E"
-            pickUpText.GetComponent<TextMesh>().text = "Press E";
+            Text textComponent = pickUpText.GetComponentInChildren<Text>(); // Get the Text component
+            if (textComponent != null)
+            {
+                textComponent.text = "Press E"; // Set the text to display "Press E"
+            }
+            else
+            {
+                Debug.LogError("Text component not found on pickUpText GameObject or its children.");
+            }
         }
     }
 }
+
 
 
