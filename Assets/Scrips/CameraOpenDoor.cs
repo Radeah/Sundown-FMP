@@ -25,7 +25,7 @@ namespace CameraDoorScript
                 {
                     text.SetActive(true);
                     // Check for "E" key or Space key press to open the door
-                    if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Space))
+                    if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.E))
                     {
                         hit.transform.GetComponent<DoorScript.Door>().OpenDoor();
                     }
